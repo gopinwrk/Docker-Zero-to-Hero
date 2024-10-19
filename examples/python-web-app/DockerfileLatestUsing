@@ -1,0 +1,27 @@
+# Uing Virtual VM 
+# Use an official Ubuntu image
+FROM ubuntu:latest
+
+# Set the working directory in the image
+WORKDIR /app
+
+# Copy the requirements file and application files
+COPY requirements.txt /app
+COPY devops /app/devops
+
+# Install necessary packages
+RUN apt-get update && \
+    apt-get install -y python3 python3-pip python3-venv
+
+# Create a virtual environment
+RUN python3 -m venv /app/venv
+
+# Activate the virtual environment and install the dependencies
+RUN . /app/venv/bin/activate && pip install -r /app/requirements.txt
+
+# Set the working directory to the devops folder
+WORKDIR /app/devops
+
+# Use the virtual environment's Python interpreter
+ENTRYPOINT ["/app/venv/bin/python"]
+CMD ["manage.py", "runserver", "0.0.0.0:8000"]
